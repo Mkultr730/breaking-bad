@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import axios from 'axios';
 
+import Quote from './components/Quote';
+
 const Container = styled.div`
   display: flex;
   align-items: center;
@@ -18,29 +20,49 @@ const Button = styled.button`
   padding: 1rem 3rem;
   font-size: 2rem;
   border: 2px solid black;
+  transition: background-size .8s ease;
+
+  :hover {
+    cursor: pointer;
+    background-size: 400px;
+  }
 `;
 
 function App() {
 
-  const [quote, setQuote] = useState({
+  const [cquote, setCquote] = useState({
     quote: '',
     author: ''
   });
+
+  const { quote, author } = cquote;
   
   const getQuote = async () => {
     const response = await axios.get('https://breaking-bad-quotes.herokuapp.com/v1/quotes');
     console.log(response.data);
-    setQuote(response.data[0]);
+    setCquote(response.data[0]);
   }
+
+  useEffect(() => {
+    getQuote();
+  }, [])
 
   return (
     <Container>
+
+      {(quote.length === 0)? null: 
+        <Quote 
+          quote={quote}
+          author={author}
+        />
+      }
+
       <Button
         onClick={getQuote}
       >
         Get quote
       </Button>
-      {quote.quote}
+
     </Container>
   );
 }
